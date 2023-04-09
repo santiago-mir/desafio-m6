@@ -1,8 +1,16 @@
 import { rtdb, ref, onValue } from "./db";
 import * as lodash from "lodash";
 
+let API_BASE_URL = "http://localhost:3002";
+
 const state = {
-  data: {},
+  data: {
+    userData: {
+      name: "",
+      email: "",
+      userId: "",
+    },
+  },
   listeners: [],
   getState() {
     return this.data;
@@ -17,6 +25,31 @@ const state = {
   },
   suscribe(callback: (any) => any) {
     this.listeners.push(callback);
+  },
+  setUserData(name, email, userId?) {
+    const currentState = this.getState();
+    currentState.userData.name = name;
+    currentState.userData.email = email;
+    currentState.userData.userId = userId;
+    this.setState(currentState);
+  },
+  signUpUser(email: string, name: string) {
+    fetch(API_BASE_URL + "/signup", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nombre: name,
+        email: email,
+      }),
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((res) => {
+        state.setUserData(name, email, res.id);
+      });
   },
 };
 

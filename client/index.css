@@ -24,10 +24,9 @@ body{
 .form{
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    align-items: center;
-    max-width: 350px;
+    gap: 15px;
 }
+
 
 
 .label{
@@ -44,3 +43,15 @@ body{
     border-radius: 5px;
     border: none;
 }
+
+.button{
+    height: 87px;
+    min-width: 330px;
+    max-width: 380px;
+    border: 10px solid var(--dark-blue);
+    border-radius: 10px;
+    background-color: var(--blue);
+    color: white;
+    font-family: 'Odibee Sans', cursive;
+    font-size: 45px;
+  }
