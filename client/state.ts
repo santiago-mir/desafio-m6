@@ -51,6 +51,27 @@ const state = {
         state.setUserData(name, email, res.id);
       });
   },
+  loginUser(email: string) {
+    fetch(API_BASE_URL + "/auth", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+      }),
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((ResFromServer) => {
+        state.setUserData(
+          ResFromServer.data.nombre,
+          ResFromServer.data.email,
+          ResFromServer.id
+        );
+      });
+  },
 };
 
 export { state };

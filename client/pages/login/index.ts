@@ -1,4 +1,5 @@
 import { state } from "../../state";
+import { Router } from "@vaadin/router";
 
 class Login extends HTMLElement {
   connectedCallback() {
@@ -6,13 +7,28 @@ class Login extends HTMLElement {
   }
   addListeners() {
     const signUpFormEl = this.querySelector(".sign-up");
+    const loginFormEl = this.querySelector(".login");
     this.submitSignUpForm(signUpFormEl);
+    this.submitLoginForm(loginFormEl);
   }
   submitSignUpForm(formEl) {
     formEl.addEventListener("submit", (event) => {
       event.preventDefault();
       let target = event.target as any;
       state.signUpUser(target.email.value, target.name.value);
+      state.suscribe(() => {
+        Router.go("/home");
+      });
+    });
+  }
+  submitLoginForm(formEl) {
+    formEl.addEventListener("submit", (event) => {
+      event.preventDefault();
+      let target = event.target as any;
+      state.loginUser(target.email.value);
+      state.suscribe(() => {
+        Router.go("/home");
+      });
     });
   }
   render() {
@@ -32,11 +48,11 @@ class Login extends HTMLElement {
     </div>  
     <custom-text type="subtitle">Ingresa</custom-text>
     <div class="form-container">
-    <form class="form">
+    <form class="form login">
     <label class="label"> Email
     <input class="input" type="email" name="email"/>
     </label>
-    <custom-button>Ingresa</custom-button>
+    <button class="button">Ingresa</button>
     </form>
     </div>
     </div>  
