@@ -1,7 +1,12 @@
 import { rtdb, ref, onValue } from "./db";
 import * as lodash from "lodash";
 
-let API_BASE_URL = "http://localhost:3002";
+let API_BASE_URL = "";
+if (process.env.ENVIRONMENT == "development") {
+  API_BASE_URL = "http://localhost:3000";
+} else {
+  API_BASE_URL = "";
+}
 
 const state = {
   data: {
