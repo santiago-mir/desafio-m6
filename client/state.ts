@@ -5,7 +5,7 @@ let API_BASE_URL = "";
 if (process.env.ENVIRONMENT == "development") {
   API_BASE_URL = "http://localhost:3000";
 } else {
-  API_BASE_URL = "";
+  API_BASE_URL = "https://desafio-mod-6.onrender.com";
 }
 
 const state = {
