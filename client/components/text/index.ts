@@ -21,7 +21,7 @@ class CustomText extends HTMLElement {
         font-size: 80px;
         line-height: 70px;
         text-align:center;
-      
+        margin-top: 20px;
         color: var(--green);
       }
 

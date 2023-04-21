@@ -9,7 +9,14 @@ class Home extends HTMLElement {
 
   render() {
     this.innerHTML = `
-    hola q tal soy la home 
+    <div class="main-container">
+    <custom-text>Piedra Papel o Tijera </custom-text>
+    <div class="home-container">
+    <custom-text type="subtitle">Bienvenidx ${state.getUserName()}</custom-text>
+    <button class="button">Nuevo Juego</button>
+    <button class="button">Ingresar a una sala</button>
+    </div>
+    </div>
     `;
     this.addListeners();
   }

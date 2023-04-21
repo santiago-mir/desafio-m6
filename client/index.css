@@ -16,6 +16,13 @@ body{
     padding: 20px
 }
 
+.home-container{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
 .form-container{
     display: flex;
     justify-content: center;
