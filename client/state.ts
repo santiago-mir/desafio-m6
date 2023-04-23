@@ -1,3 +1,4 @@
+import { log } from "console";
 import { rtdb, ref, onValue } from "./db";
 import * as lodash from "lodash";
 
@@ -81,9 +82,35 @@ const state = {
         );
       });
   },
+  createRoom(userId: string) {
+    const currentState = this.getState();
+    fetch(API_BASE_URL + "/rooms", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId,
+      }),
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((resFromServer) => {
+        console.log(resFromServer);
+        // currentState.roomId = resFromServer.id;
+        // currentState.privateRoomId = resFromServer.privateId;
+        // this.setState(currentState);
+        // this.listenRoom();
+      });
+  },
   getUserName() {
     const currentState = this.getState();
     return currentState.userData.name;
+  },
+  getUserId() {
+    const currentState = this.getState();
+    return currentState.userData.userId;
   },
 };
 
