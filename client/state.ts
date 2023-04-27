@@ -16,13 +16,18 @@ const state = {
       email: "",
       userId: "",
     },
+    rtdbData: {
+      publicId: "",
+      privateId: "",
+      currentGame: "hola",
+    },
   },
   listeners: [],
   getState() {
     return this.data;
   },
   init() {
-    const localData = localStorage.getItem("actual-state");
+    const localData = localStorage.getItem("actual-state") || this.getState();
     this.setState(JSON.parse(localData!));
   },
   setState(newState) {
@@ -42,6 +47,14 @@ const state = {
     currentState.userData.email = email;
     currentState.userData.userId = userId;
     this.setState(currentState);
+  },
+  listenRoom() {
+    const currentState = this.getState();
+    const chatRoomRef = ref(rtdb, "/rooms/" + currentState.privateRoomId); // error aca
+    onValue(chatRoomRef, (snapShot) => {
+      const data = snapShot.val();
+      console.log(data);
+    });
   },
   signUpUser(email: string, name: string) {
     fetch(API_BASE_URL + "/signup", {
@@ -83,7 +96,6 @@ const state = {
       });
   },
   createRoom(userId: string) {
-    const currentState = this.getState();
     fetch(API_BASE_URL + "/rooms", {
       method: "post",
       headers: {
@@ -97,12 +109,31 @@ const state = {
         return res.json();
       })
       .then((resFromServer) => {
-        console.log(resFromServer);
-        // currentState.roomId = resFromServer.id;
-        // currentState.privateRoomId = resFromServer.privateId;
-        // this.setState(currentState);
-        // this.listenRoom();
+        state.setRtdbData(resFromServer.id, resFromServer.privateId);
+        this.listenRoom();
       });
+  },
+  enterRoom(roomId: string) {
+    const userId = state.getUserId();
+    fetch(API_BASE_URL + "/rooms/" + roomId + "?userId=" + userId, {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        state.setRtdbData(roomId, data.rtdbRoomId);
+        this.listenRoom();
+      });
+  },
+  setRtdbData(publicId: string, privateId: string) {
+    const currentState = this.getState();
+    currentState.rtdbData.publicId = publicId;
+    currentState.rtdbData.privateId = privateId;
+    this.setState(currentState);
   },
   getUserName() {
     const currentState = this.getState();
@@ -111,6 +142,10 @@ const state = {
   getUserId() {
     const currentState = this.getState();
     return currentState.userData.userId;
+  },
+  getPublicId() {
+    const currentState = this.getState();
+    return currentState.rtdbData.publicId;
   },
 };
 

@@ -16,6 +16,15 @@ body{
     padding: 20px
 }
 
+.hands-container {
+    width: 100%;
+    max-width: 400px;
+    height: 20vh;
+    justify-content: space-between;
+    display: flex;
+    
+}
+
 .home-container{
     display: flex;
     flex-direction: column;
@@ -23,13 +32,33 @@ body{
     align-items: center;
 }
 
+.game-room-container{
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 15px;
+}
+
 .form-container{
     display: flex;
     justify-content: center;
 }
 
+.code-container{
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
 .form{
     display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.existing-room-form{
+    display: none;
     flex-direction: column;
     gap: 15px;
 }

@@ -65,8 +65,8 @@ app.post("/rooms", (req, res) => {
         const newRoomRef = rtdb.ref("rooms/" + nanoid());
         newRoomRef
           .set({
-            messages: [],
             owner: userId,
+            messages: [],
           })
           .then(() => {
             const roomPrivateId = newRoomRef.key;
