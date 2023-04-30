@@ -17,7 +17,7 @@ class Home extends HTMLElement {
   }
   submitNewRoom() {
     const userId = state.getUserId();
-    state.createRoom(userId);
+    state.createRoom(userId, state.getUserName());
     state.suscribe(() => {
       Router.go("/game-room");
     });
@@ -30,7 +30,7 @@ class Home extends HTMLElement {
     castFormEl.addEventListener("submit", (e) => {
       e.preventDefault();
       let roomId = e.target["room-id"].value;
-      state.enterRoom(roomId);
+      state.enterRoom(roomId, state.getUserName());
       state.suscribe(() => {
         Router.go("/game-room");
       });

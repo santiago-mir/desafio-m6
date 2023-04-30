@@ -57,6 +57,7 @@ app.post("/auth", (req, res) => {
 });
 app.post("/rooms", (req, res) => {
   const { userId } = req.body;
+  const { userName } = req.body;
   userRef
     .doc(userId.toString())
     .get()
@@ -66,7 +67,19 @@ app.post("/rooms", (req, res) => {
         newRoomRef
           .set({
             owner: userId,
-            messages: [],
+            currentGame: {
+              playerOne: {
+                name: userName,
+                online: true,
+                start: false,
+              },
+              playerTwo: {
+                name: "",
+                online: false,
+                start: false,
+              },
+              history: [],
+            },
           })
           .then(() => {
             const roomPrivateId = newRoomRef.key;
@@ -91,22 +104,10 @@ app.post("/rooms", (req, res) => {
     });
 });
 
-app.post("/rooms/:roomId/messages", (req, res) => {
-  const chatRoomRef = rtdb.ref("/rooms/" + req.params.roomId + "/messages");
-  chatRoomRef.push(
-    {
-      from: req.body.from,
-      message: req.body.message,
-    },
-    function () {
-      res.json("todo joya");
-    }
-  );
-});
-
 app.get("/rooms/:roomId", (req, res) => {
   const { userId } = req.query;
   const { roomId } = req.params;
+  const { userName } = req.query;
   userRef
     .doc(userId!.toString())
     .get()
@@ -117,6 +118,11 @@ app.get("/rooms/:roomId", (req, res) => {
           .get()
           .then((docSnap) => {
             const data = docSnap.data();
+            let rtdbRoomRef = rtdb.ref("rooms/" + data.rtdbRoomId);
+            rtdbRoomRef.child("currentGame").child("playerTwo").update({
+              name: userName,
+              online: true,
+            });
             res.json(data);
           });
       } else {

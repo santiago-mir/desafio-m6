@@ -5,8 +5,16 @@ class gameRoom extends HTMLElement {
   connectedCallback() {
     this.render();
   }
-  addListeners() {}
-
+  addListeners() {
+    this.listenPlayersStatus();
+  }
+  listenPlayersStatus() {
+    state.suscribe(() => {
+      if (state.playersAreOnline()) {
+        Router.go("start-game");
+      }
+    });
+  }
   render() {
     this.innerHTML = `
         <div class="game-room-container">

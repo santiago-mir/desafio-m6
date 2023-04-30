@@ -1,4 +1,3 @@
-import { log } from "console";
 import { rtdb, ref, onValue } from "./db";
 import * as lodash from "lodash";
 
@@ -19,7 +18,18 @@ const state = {
     rtdbData: {
       publicId: "",
       privateId: "",
-      currentGame: "hola",
+      currentGame: {
+        playerOne: {
+          name: "",
+          online: false,
+          start: false,
+        },
+        playerTwo: {
+          name: "",
+          online: false,
+          start: false,
+        },
+      },
     },
   },
   listeners: [],
@@ -27,8 +37,15 @@ const state = {
     return this.data;
   },
   init() {
-    const localData = localStorage.getItem("actual-state") || this.getState();
-    this.setState(JSON.parse(localData!));
+    let localData;
+    const storageData = localStorage.getItem("actual-state");
+    if (storageData) {
+      localData = storageData;
+      this.setState(JSON.parse(localData!));
+    } else {
+      localData = this.getState();
+      this.setState(localData);
+    }
   },
   setState(newState) {
     this.data = newState;
@@ -50,10 +67,11 @@ const state = {
   },
   listenRoom() {
     const currentState = this.getState();
-    const chatRoomRef = ref(rtdb, "/rooms/" + currentState.privateRoomId); // error aca
+    const chatRoomRef = ref(rtdb, "/rooms/" + state.getPrivateId());
     onValue(chatRoomRef, (snapShot) => {
       const data = snapShot.val();
-      console.log(data);
+      currentState.rtdbData.currentGame = data.currentGame;
+      state.setState(currentState);
     });
   },
   signUpUser(email: string, name: string) {
@@ -95,7 +113,7 @@ const state = {
         );
       });
   },
-  createRoom(userId: string) {
+  createRoom(userId: string, userName: string) {
     fetch(API_BASE_URL + "/rooms", {
       method: "post",
       headers: {
@@ -103,6 +121,7 @@ const state = {
       },
       body: JSON.stringify({
         userId,
+        userName,
       }),
     })
       .then((res) => {
@@ -113,14 +132,23 @@ const state = {
         this.listenRoom();
       });
   },
-  enterRoom(roomId: string) {
+  enterRoom(roomId: string, userName: string) {
     const userId = state.getUserId();
-    fetch(API_BASE_URL + "/rooms/" + roomId + "?userId=" + userId, {
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    fetch(
+      API_BASE_URL +
+        "/rooms/" +
+        roomId +
+        "?userId=" +
+        userId +
+        "&userName=" +
+        userName,
+      {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => {
         return res.json();
       })
@@ -146,6 +174,21 @@ const state = {
   getPublicId() {
     const currentState = this.getState();
     return currentState.rtdbData.publicId;
+  },
+  getPrivateId() {
+    const currentState = this.getState();
+    return currentState.rtdbData.privateId;
+  },
+  getPlayerTwoName() {
+    const currentState = this.getState();
+    return currentState.rtdbData.currentGame.playerTwo.name;
+  },
+  playersAreOnline() {
+    const currentState = this.getState();
+    return (
+      currentState.rtdbData.currentGame.playerOne.online &&
+      currentState.rtdbData.currentGame.playerTwo.online
+    );
   },
 };
 
