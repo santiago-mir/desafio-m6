@@ -157,6 +157,27 @@ const state = {
         this.listenRoom();
       });
   },
+  updateStartStatus(userId: string, roomId: string) {
+    if (state.getUserName() == state.getPlayerTwoName()) {
+      fetch(API_BASE_URL + "/rooms/status", {
+        method: "put",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          roomId,
+          player: "playerTwo",
+        }),
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((dataFromServer) => {
+          console.log(dataFromServer);
+        });
+    }
+  },
   setRtdbData(publicId: string, privateId: string) {
     const currentState = this.getState();
     currentState.rtdbData.publicId = publicId;

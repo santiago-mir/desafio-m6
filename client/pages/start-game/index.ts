@@ -5,7 +5,17 @@ class startGame extends HTMLElement {
   connectedCallback() {
     this.render();
   }
-  addListeners() {}
+  addListeners() {
+    const startGameButtonEl = this.querySelector(".button");
+    this.startGame(startGameButtonEl);
+  }
+
+  startGame(buttonEl) {
+    buttonEl.addEventListener("click", (e) => {
+      state.updateStartStatus(state.getUserId(), state.getPrivateId());
+      state.suscribe(() => {});
+    });
+  }
 
   render() {
     this.innerHTML = `
