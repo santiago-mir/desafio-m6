@@ -132,7 +132,7 @@ app.get("/rooms/:roomId", (req, res) => {
       }
     });
 });
-app.put("/rooms/status", (req, res) => {
+app.patch("/rooms/status", (req, res) => {
   const { userId } = req.body;
   const { roomId } = req.body;
   const { player } = req.body;
@@ -141,7 +141,7 @@ app.put("/rooms/status", (req, res) => {
     .get()
     .then((snap) => {
       if (snap.exists) {
-        let data = snap.data();
+        let data = { player: player, status: true };
         let rtdbRoomRef = rtdb.ref("rooms/" + roomId);
         rtdbRoomRef.child("currentGame").child(player).update({
           start: true,

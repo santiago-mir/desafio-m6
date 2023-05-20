@@ -158,9 +158,10 @@ const state = {
       });
   },
   updateStartStatus(userId: string, roomId: string) {
+    const currentState = this.getState();
     if (state.getUserName() == state.getPlayerTwoName()) {
       fetch(API_BASE_URL + "/rooms/status", {
-        method: "put",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
@@ -174,7 +175,25 @@ const state = {
           return res.json();
         })
         .then((dataFromServer) => {
-          console.log(dataFromServer);
+          state.setPlayerStartStatus(dataFromServer.player);
+        });
+    } else {
+      fetch(API_BASE_URL + "/rooms/status", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          roomId,
+          player: "playerOne",
+        }),
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((dataFromServer) => {
+          state.setPlayerStartStatus(dataFromServer.player);
         });
     }
   },
@@ -182,6 +201,11 @@ const state = {
     const currentState = this.getState();
     currentState.rtdbData.publicId = publicId;
     currentState.rtdbData.privateId = privateId;
+    this.setState(currentState);
+  },
+  setPlayerStartStatus(player: string) {
+    const currentState = this.getState();
+    currentState.rtdbData.currentGame[player].start = true;
     this.setState(currentState);
   },
   getUserName() {
@@ -199,6 +223,10 @@ const state = {
   getPrivateId() {
     const currentState = this.getState();
     return currentState.rtdbData.privateId;
+  },
+  getPlayerOneName() {
+    const currentState = this.getState();
+    return currentState.rtdbData.currentGame.playerOne.name;
   },
   getPlayerTwoName() {
     const currentState = this.getState();

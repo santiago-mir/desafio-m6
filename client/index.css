@@ -44,6 +44,8 @@ body{
 
 .start-room-content{
     max-width: 400px;
+    min-height: 300px;
+    align-items: center;
     display: grid;
     margin: 0 auto;
     gap: 25px;

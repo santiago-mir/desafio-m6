@@ -13,7 +13,12 @@ class startGame extends HTMLElement {
   startGame(buttonEl) {
     buttonEl.addEventListener("click", (e) => {
       state.updateStartStatus(state.getUserId(), state.getPrivateId());
-      state.suscribe(() => {});
+      const roomContent = this.querySelector(".start-room-content");
+      state.suscribe(() => {
+        roomContent!.innerHTML = ` 
+        <custom-text tag="p" type="paragraph">Esperando a que el otro jugador presione Jugar</custom-text>
+        `;
+      });
     });
   }
 
@@ -22,7 +27,7 @@ class startGame extends HTMLElement {
         <div class="main-container">
         <header class="start-game-header">
         <div class="history-container">
-        <custom-text type="paragraph">${state.getUserName()}:</custom-text>
+        <custom-text type="paragraph">${state.getPlayerOneName()}:</custom-text>
         <custom-text type="paragraph">${state.getPlayerTwoName()}:</custom-text>
         </div>
         <div class="id-container">
