@@ -5,6 +5,7 @@ import "./pages/login";
 import "./pages/home";
 import "./pages/game-room";
 import "./pages/start-game";
+import "./pages/countdown";
 import "./router";
 import { state } from "./state";
 

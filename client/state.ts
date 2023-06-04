@@ -232,11 +232,26 @@ const state = {
     const currentState = this.getState();
     return currentState.rtdbData.currentGame.playerTwo.name;
   },
+  getOtherUserName() {
+    const currentState = this.getState();
+    if (currentState.rtdbData.currentGame.playerOne.start) {
+      return this.getPlayerTwoName();
+    } else {
+      return this.getPlayerOneName();
+    }
+  },
   playersAreOnline() {
     const currentState = this.getState();
     return (
       currentState.rtdbData.currentGame.playerOne.online &&
       currentState.rtdbData.currentGame.playerTwo.online
+    );
+  },
+  playersAreReady() {
+    const currentState = this.getState();
+    return (
+      currentState.rtdbData.currentGame.playerOne.start &&
+      currentState.rtdbData.currentGame.playerTwo.start
     );
   },
 };

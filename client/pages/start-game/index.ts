@@ -16,8 +16,11 @@ class startGame extends HTMLElement {
       const roomContent = this.querySelector(".start-room-content");
       state.suscribe(() => {
         roomContent!.innerHTML = ` 
-        <custom-text tag="p" type="paragraph">Esperando a que el otro jugador presione Jugar</custom-text>
+        <custom-text tag="p" type="paragraph">Esperando a que ${state.getOtherUserName()} presione Jugar</custom-text>
         `;
+        if (state.playersAreReady()) {
+          Router.go("countdown");
+        }
       });
     });
   }

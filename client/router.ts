@@ -5,5 +5,6 @@ router.setRoutes([
   { path: "/home", component: "home-page" },
   { path: "/game-room", component: "game-room-page" },
   { path: "/start-game", component: "start-page" },
+  { path: "/countdown", component: "countdown-page" },
   { path: "(.*)", redirect: "/" },
 ]);
