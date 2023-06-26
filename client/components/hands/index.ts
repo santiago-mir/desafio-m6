@@ -2,7 +2,7 @@ class CustomImage extends HTMLElement {
   shadow: ShadowRoot;
   type: string = "piedra" || "papel" || "tijera";
   status: string = "active" || "inactive";
-  variant: string = "computer-hand" || "user-hand" || "";
+  variant: string = "player-one-hand" || "player-two-hand" || "";
 
   constructor() {
     super();
@@ -38,7 +38,7 @@ class CustomImage extends HTMLElement {
             
           }
           
-          .computer-hand, .user-hand{
+          .player-one-hand, .player-two-hand{
             width: 150px;
             height: 320px;
             position:relative;
@@ -47,12 +47,12 @@ class CustomImage extends HTMLElement {
             
           }
           
-         .computer-hand{
+         .player-one-hand{
             rotate: 180deg;
             top: -70px;
             
          }
-         .user-hand{
+         .player-two-hand{
           bottom: -70px;
          }
         
@@ -87,12 +87,12 @@ class CustomImage extends HTMLElement {
     if (this.status == "active") {
       img?.classList.add("active");
     }
-    if (this.variant == "computer-hand") {
+    if (this.variant == "player-one-hand") {
       img?.classList.remove("imagen");
-      img?.classList.add("computer-hand");
-    } else if (this.variant == "user-hand") {
+      img?.classList.add("player-one-hand");
+    } else if (this.variant == "player-two-hand") {
       img?.classList.remove("imagen");
-      img?.classList.add("user-hand");
+      img?.classList.add("player-two-hand");
     }
 
     this.shadow.appendChild(style);

@@ -117,4 +117,43 @@ body{
     color: white;
     font-family: 'Odibee Sans', cursive;
     font-size: 45px;
-  }
+}
+
+.countdown-container{
+    min-width: 330px;
+    max-width: 400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.game-container{
+    flex-direction: column;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.countdown{
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    border: solid 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.disabeld{
+    pointer-events: none;
+    opacity: 50%;
+}
+
+.target{
+    opacity: 100%;
+    position: relative;
+    bottom: 50px;
+}

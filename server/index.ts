@@ -154,6 +154,51 @@ app.patch("/rooms/status", (req, res) => {
       }
     });
 });
+app.patch("/rooms/status", (req, res) => {
+  const { userId } = req.body;
+  const { roomId } = req.body;
+  const { player } = req.body;
+  userRef
+    .doc(userId.toString())
+    .get()
+    .then((snap) => {
+      if (snap.exists) {
+        let data = { player: player, status: true };
+        let rtdbRoomRef = rtdb.ref("rooms/" + roomId);
+        rtdbRoomRef.child("currentGame").child(player).update({
+          start: true,
+        });
+        res.json(data);
+      } else {
+        res.status(401).json({
+          message: "no existis",
+        });
+      }
+    });
+});
+app.patch("/rooms/hand", (req, res) => {
+  const { userId } = req.body;
+  const { roomId } = req.body;
+  const { player } = req.body;
+  const { hand } = req.body;
+  userRef
+    .doc(userId.toString())
+    .get()
+    .then((snap) => {
+      if (snap.exists) {
+        let data = { player: player, hand: hand };
+        let rtdbRoomRef = rtdb.ref("rooms/" + roomId);
+        rtdbRoomRef.child("currentGame").child(player).update({
+          currentHand: hand,
+        });
+        res.json(data);
+      } else {
+        res.status(401).json({
+          message: "no existis",
+        });
+      }
+    });
+});
 app.use(express.static(path.join(__dirname, "../dist")));
 
 app.get("*", (req, res) => {

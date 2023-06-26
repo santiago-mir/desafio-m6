@@ -23,11 +23,13 @@ const state = {
           name: "",
           online: false,
           start: false,
+          currentHand: "",
         },
         playerTwo: {
           name: "",
           online: false,
           start: false,
+          currentHand: "",
         },
       },
     },
@@ -158,7 +160,6 @@ const state = {
       });
   },
   updateStartStatus(userId: string, roomId: string) {
-    const currentState = this.getState();
     if (state.getUserName() == state.getPlayerTwoName()) {
       fetch(API_BASE_URL + "/rooms/status", {
         method: "PATCH",
@@ -197,6 +198,47 @@ const state = {
         });
     }
   },
+  updateHandPick(userId: string, roomId: string, hand: string) {
+    if (state.getUserName() == state.getPlayerTwoName()) {
+      fetch(API_BASE_URL + "/rooms/hand", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          roomId,
+          player: "playerTwo",
+          hand,
+        }),
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((dataFromServer) => {
+          state.setMove(dataFromServer.player, dataFromServer.hand);
+        });
+    } else {
+      fetch(API_BASE_URL + "/rooms/hand", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          roomId,
+          player: "playerOne",
+          hand,
+        }),
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((dataFromServer) => {
+          state.setMove(dataFromServer.player, dataFromServer.hand);
+        });
+    }
+  },
   setRtdbData(publicId: string, privateId: string) {
     const currentState = this.getState();
     currentState.rtdbData.publicId = publicId;
@@ -206,6 +248,11 @@ const state = {
   setPlayerStartStatus(player: string) {
     const currentState = this.getState();
     currentState.rtdbData.currentGame[player].start = true;
+    this.setState(currentState);
+  },
+  setMove(player: string, hand: string) {
+    const currentState = this.getState();
+    currentState.rtdbData.currentGame[player].currentHand = hand;
     this.setState(currentState);
   },
   getUserName() {
@@ -240,6 +287,14 @@ const state = {
       return this.getPlayerOneName();
     }
   },
+  getPlayerOneHand() {
+    const currentState = this.getState();
+    return currentState.rtdbData.currentGame.playerOne.currentHand;
+  },
+  getPlayerTwoHand() {
+    const currentState = this.getState();
+    return currentState.rtdbData.currentGame.playerTwo.currentHand;
+  },
   playersAreOnline() {
     const currentState = this.getState();
     return (
@@ -253,6 +308,22 @@ const state = {
       currentState.rtdbData.currentGame.playerOne.start &&
       currentState.rtdbData.currentGame.playerTwo.start
     );
+  },
+  playersChoseMove() {
+    const currentState = this.getState();
+    let movePlayerOne = currentState.rtdbData.currentGame.playerOne.currentHand;
+    let movePlayerTwo = currentState.rtdbData.currentGame.playerTwo.currentHand;
+    let res: boolean =
+      (movePlayerOne == "tijera" ||
+        movePlayerOne == "papel" ||
+        movePlayerOne == "piedra") &&
+      (movePlayerTwo == "tijera" ||
+        movePlayerTwo == "papel" ||
+        movePlayerTwo == "piedra");
+    return res;
+  },
+  isPlayerOne() {
+    return this.getUserName() == this.getPlayerOneName();
   },
 };
 
