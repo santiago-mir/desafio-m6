@@ -325,6 +325,23 @@ const state = {
   isPlayerOne() {
     return this.getUserName() == this.getPlayerOneName();
   },
+  whoWins(playerOneHand: string, playerTwoHand: string) {
+    if (playerOneHand == playerTwoHand) {
+      return "empate";
+    } else if (
+      (playerOneHand == "tijera" && playerTwoHand == "papel") ||
+      (playerOneHand == "piedra" && playerTwoHand == "tijera") ||
+      (playerOneHand == "papel" && playerTwoHand == "piedra")
+    ) {
+      return true;
+    } else if (
+      (playerOneHand == "tijera" && playerTwoHand == "piedra") ||
+      (playerOneHand == "piedra" && playerTwoHand == "papel") ||
+      (playerOneHand == "papel" && playerTwoHand == "tijera")
+    ) {
+      return false;
+    }
+  },
 };
 
 export { state };
