@@ -6,7 +6,6 @@ class countdown extends HTMLElement {
     this.render();
   }
   addListeners(counter) {
-    let container = this.querySelector(".countdown-container");
     let countdown = this.querySelector(".countdown");
     let hands = this.querySelectorAll(".imagen");
     function initCountdown() {
@@ -15,9 +14,8 @@ class countdown extends HTMLElement {
         countdown!.innerHTML = `
             <custom-text type="title">${counter}</custom-text>
           `;
-        if (counter <= 0) {
+        if (counter <= 0 || state.playersChoseMove()) {
           clearInterval(intervalID);
-          console.log("termino el countdown");
         }
       }, 1000);
       for (const hand of hands!) {
@@ -35,24 +33,9 @@ class countdown extends HTMLElement {
         });
       }
     }
-    function updatePage(playerOneHand, playerTwoHand) {
-      const intervalUpdate = setInterval(() => {
-        container!.innerHTML = `
-        <div class="game-container">
-        <custom-image class="imagen" variant="player-one-hand" type=${playerOneHand}></custom-image>
-        <custom-image class="imagen" variant="player-two-hand" type=${playerTwoHand}></custom-image>
-        </div>
-      `;
-        clearInterval(intervalUpdate);
-      }, 1000);
-    }
     state.suscribe(() => {
       if (state.playersChoseMove()) {
-        updatePage(state.getPlayerOneHand(), state.getPlayerTwoHand());
-        const changeRoute = setInterval(() => {
-          Router.go("results");
-          clearInterval(changeRoute);
-        }, 2000);
+        Router.go("preview");
       }
     });
     initCountdown();

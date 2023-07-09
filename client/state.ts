@@ -31,6 +31,10 @@ const state = {
           start: false,
           currentHand: "",
         },
+        history: {
+          playerOne: 0,
+          playerTwo: 0,
+        },
       },
     },
   },
@@ -51,7 +55,6 @@ const state = {
   },
   setState(newState) {
     this.data = newState;
-    console.log(newState);
     for (const cb of this.listeners) {
       cb();
     }
@@ -239,10 +242,102 @@ const state = {
         });
     }
   },
+  updateHistory(userId: string, roomId: string, result: string) {
+    if (state.getUserName() == state.getPlayerTwoName()) {
+      fetch(API_BASE_URL + "/rooms/history", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          roomId,
+          result,
+        }),
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((dataFromServer) => {
+          state.setHistory(dataFromServer.playerOne, dataFromServer.playerTwo);
+        });
+    } else {
+      fetch(API_BASE_URL + "/rooms/history", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          roomId,
+          result: "empate",
+        }),
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((dataFromServer) => {
+          state.setHistory(dataFromServer.playerOne, dataFromServer.playerTwo);
+        });
+    }
+  },
+  resetFlags(userId: string, roomId: string) {
+    if (state.getUserName() == state.getPlayerTwoName()) {
+      fetch(API_BASE_URL + "/rooms/reset", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          roomId,
+          player: "playerTwo",
+          hand: "",
+        }),
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((dataFromServer) => {
+          state.setFlags(dataFromServer.player);
+        });
+    } else {
+      fetch(API_BASE_URL + "/rooms/reset", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          roomId,
+          player: "playerOne",
+          hand: "",
+        }),
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((dataFromServer) => {
+          state.setFlags(dataFromServer.player);
+        });
+    }
+  },
+  setFlags(player: string) {
+    const currentState = this.getState();
+    currentState.rtdbData.currentGame[player].start = false;
+    currentState.rtdbData.currentGame[player].currentHand = "";
+    this.setState(currentState);
+  },
   setRtdbData(publicId: string, privateId: string) {
     const currentState = this.getState();
     currentState.rtdbData.publicId = publicId;
     currentState.rtdbData.privateId = privateId;
+    this.setState(currentState);
+  },
+  setHistory(playerOneScore, playerTwoScore) {
+    const currentState = this.getState();
+    currentState.rtdbData.currentGame.history.playerOne = playerOneScore;
+    currentState.rtdbData.currentGame.history.playerTwo = playerTwoScore;
     this.setState(currentState);
   },
   setPlayerStartStatus(player: string) {
@@ -295,6 +390,10 @@ const state = {
     const currentState = this.getState();
     return currentState.rtdbData.currentGame.playerTwo.currentHand;
   },
+  getHistory() {
+    const currentState = this.getState();
+    return currentState.rtdbData.currentGame.history;
+  },
   playersAreOnline() {
     const currentState = this.getState();
     return (
@@ -308,6 +407,17 @@ const state = {
       currentState.rtdbData.currentGame.playerOne.start &&
       currentState.rtdbData.currentGame.playerTwo.start
     );
+  },
+  playersStatusIsFalse() {
+    const currentState = this.getState();
+    let res: Boolean = false;
+    if (
+      currentState.rtdbData.currentGame.playerOne.start == false &&
+      currentState.rtdbData.currentGame.playerTwo.start == false
+    ) {
+      res = true;
+    }
+    return res;
   },
   playersChoseMove() {
     const currentState = this.getState();
@@ -333,13 +443,13 @@ const state = {
       (playerOneHand == "piedra" && playerTwoHand == "tijera") ||
       (playerOneHand == "papel" && playerTwoHand == "piedra")
     ) {
-      return true;
+      return "playerOne";
     } else if (
       (playerOneHand == "tijera" && playerTwoHand == "piedra") ||
       (playerOneHand == "piedra" && playerTwoHand == "papel") ||
       (playerOneHand == "papel" && playerTwoHand == "tijera")
     ) {
-      return false;
+      return "playerTwo";
     }
   },
 };

@@ -78,7 +78,10 @@ app.post("/rooms", (req, res) => {
                 online: false,
                 start: false,
               },
-              history: [],
+              history: {
+                playerOne: 0,
+                playerTwo: 0,
+              },
             },
           })
           .then(() => {
@@ -190,6 +193,74 @@ app.patch("/rooms/hand", (req, res) => {
         let rtdbRoomRef = rtdb.ref("rooms/" + roomId);
         rtdbRoomRef.child("currentGame").child(player).update({
           currentHand: hand,
+        });
+        res.json(data);
+      } else {
+        res.status(401).json({
+          message: "no existis",
+        });
+      }
+    });
+});
+app.patch("/rooms/history", (req, res) => {
+  const { userId } = req.body;
+  const { roomId } = req.body;
+  const { result } = req.body;
+  userRef
+    .doc(userId.toString())
+    .get()
+    .then((snap) => {
+      if (snap.exists) {
+        let rtdbRoomRef = rtdb.ref("rooms/" + roomId);
+        let currentHistory;
+        rtdbRoomRef
+          .child("currentGame")
+          .get()
+          .then((snap) => {
+            if (snap.exists) {
+              currentHistory = snap.val().history;
+              if (result == "playerOne") {
+                currentHistory.playerOne = currentHistory.playerOne + 1;
+                rtdbRoomRef.child("currentGame").child("history").update({
+                  playerOne: currentHistory.playerOne,
+                });
+              } else if (result == "playerTwo") {
+                currentHistory.playerTwo = currentHistory.playerTwo + 1;
+                rtdbRoomRef.child("currentGame").child("history").update({
+                  playerTwo: currentHistory.playerTwo,
+                });
+              } else if (
+                result == "playerTwo" ||
+                result == "playerOne" ||
+                result == "empate"
+              ) {
+                let updatedHistory = currentHistory;
+                res.json(updatedHistory);
+              }
+            }
+          });
+      } else {
+        res.status(401).json({
+          message: "no existis",
+        });
+      }
+    });
+});
+app.patch("/rooms/reset", (req, res) => {
+  const { userId } = req.body;
+  const { roomId } = req.body;
+  const { player } = req.body;
+  const { hand } = req.body;
+  userRef
+    .doc(userId.toString())
+    .get()
+    .then((snap) => {
+      if (snap.exists) {
+        let data = { player: player, hand: hand, status: false };
+        let rtdbRoomRef = rtdb.ref("rooms/" + roomId);
+        rtdbRoomRef.child("currentGame").child(player).update({
+          currentHand: hand,
+          start: false,
         });
         res.json(data);
       } else {

@@ -1,7 +1,7 @@
 import { state } from "../../state";
 import { Router } from "@vaadin/router";
 
-class Results extends HTMLElement {
+class results extends HTMLElement {
   connectedCallback() {
     this.render();
   }
@@ -28,14 +28,23 @@ class Results extends HTMLElement {
     );
     let background;
     let imgURL;
-    if (result == true) {
-      background = "rgb(95 203 99 / 90%);";
-      imgURL = require("url:../../assets/ganaste.png");
+    if (result == "playerOne") {
+      if (state.isPlayerOne()) {
+        background = "rgb(95 203 99 / 90%);";
+        imgURL = require("url:../../assets/ganaste.png");
+      } else {
+        background = "rgba(137, 73, 73, 0.9);";
+        imgURL = require("url:../../assets/perdiste.png");
+      }
       return { imgURL, background };
-    } else if (result == false) {
-      background = "rgba(137, 73, 73, 0.9);";
-      imgURL = require("url:../../assets/perdiste.png");
-
+    } else if (result == "playerTwo") {
+      if (state.isPlayerOne()) {
+        background = "rgba(137, 73, 73, 0.9);";
+        imgURL = require("url:../../assets/perdiste.png");
+      } else {
+        background = "rgb(95 203 99 / 90%);";
+        imgURL = require("url:../../assets/ganaste.png");
+      }
       return { imgURL, background };
     } else background = "rgb(254 211 92 / 90%);";
     imgURL = require("url:../../assets/empate.png");
@@ -51,15 +60,18 @@ class Results extends HTMLElement {
      <div class="score-container">
      <custom-text tag="h1" type="paragraph">Score</custom-text>
      <div>
-     <custom-text class="user-score" tag="p" type="paragraph">Vos:0</custom-text>
-     <custom-text class="computer-score" tag="p" type="paragraph">Maquina:0</custom-text>
+     <custom-text class="user-score" tag="p" type="paragraph">${state.getPlayerOneName()}:${
+      state.getHistory().playerOne
+    }</custom-text>
+     <custom-text class="computer-score" tag="p" type="paragraph">${state.getPlayerTwoName()}:${
+      state.getHistory().playerTwo
+    }</custom-text>
      </div>
      </div>
-     <custom-button class="play-again-button">Volver a Jugar</custom-button>
-     <custom-button class="reset-history-button">Limpiar Historial</custom-button>
+     <button class="button">Volver a Jugar</-button>
      </div>
     `;
     this.addListeners();
   }
 }
-customElements.define("results-page", Results);
+customElements.define("results-page", results);
