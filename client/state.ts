@@ -55,6 +55,7 @@ const state = {
   },
   setState(newState) {
     this.data = newState;
+    console.log(newState);
     for (const cb of this.listeners) {
       cb();
     }
@@ -77,6 +78,7 @@ const state = {
       const data = snapShot.val();
       currentState.rtdbData.currentGame = data.currentGame;
       state.setState(currentState);
+      console.log("setie el estado desde el listen room");
     });
   },
   signUpUser(email: string, name: string) {

@@ -1,11 +1,12 @@
 import { state } from "../../state";
 import { Router } from "@vaadin/router";
 
-class results extends HTMLElement {
+class result extends HTMLElement {
   connectedCallback() {
     this.render();
   }
   addListeners() {
+    state.listenRoom();
     const container = this.querySelector(".results-container");
     let containerStyle = document.createElement("style");
     containerStyle.innerHTML = `
@@ -19,6 +20,15 @@ class results extends HTMLElement {
     }
     `;
     container?.appendChild(containerStyle);
+    const buttonEl = this.querySelector(".button");
+    buttonEl?.addEventListener("click", () => {
+      state.resetFlags(state.getUserId(), state.getPrivateId());
+      state.suscribe(() => {
+        if (state.playersStatusIsFalse()) {
+          Router.go("start-game");
+        }
+      });
+    });
   }
 
   processResults() {
@@ -74,4 +84,4 @@ class results extends HTMLElement {
     this.addListeners();
   }
 }
-customElements.define("results-page", results);
+customElements.define("result-page", result);

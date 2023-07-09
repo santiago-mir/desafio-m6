@@ -7,6 +7,6 @@ router.setRoutes([
   { path: "/start-game", component: "start-page" },
   { path: "/countdown", component: "countdown-page" },
   { path: "/preview", component: "preview-page" },
-  { path: "/results", component: "results-page" },
+  { path: "/result", component: "result-page" },
   { path: "(.*)", redirect: "/" },
 ]);

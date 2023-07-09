@@ -7,7 +7,7 @@ import "./pages/game-room";
 import "./pages/start-game";
 import "./pages/countdown";
 import "./pages/preview";
-import "./pages/results";
+import "./pages/result";
 import "./router";
 import { state } from "./state";
 

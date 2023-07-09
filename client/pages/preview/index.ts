@@ -14,9 +14,10 @@ class preview extends HTMLElement {
     let counter = 0;
     const intervalID = setInterval(() => {
       counter++;
-      if (counter == 3) {
+      console.log(counter);
+      if (counter == 2) {
         clearInterval(intervalID);
-        Router.go("/results");
+        Router.go("result");
       }
     }, 1000);
   }
