@@ -11,15 +11,9 @@ class preview extends HTMLElement {
       state.getPrivateId(),
       state.whoWins(state.getPlayerOneHand(), state.getPlayerTwoHand())!
     );
-    let counter = 0;
-    const intervalID = setInterval(() => {
-      counter++;
-      console.log(counter);
-      if (counter == 2) {
-        clearInterval(intervalID);
-        Router.go("result");
-      }
-    }, 1000);
+    state.suscribe(() => {
+      Router.go("result");
+    });
   }
 
   render() {

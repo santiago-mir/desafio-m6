@@ -176,13 +176,7 @@ const state = {
           roomId,
           player: "playerTwo",
         }),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((dataFromServer) => {
-          state.setPlayerStartStatus(dataFromServer.player);
-        });
+      });
     } else {
       fetch(API_BASE_URL + "/rooms/status", {
         method: "PATCH",
@@ -194,13 +188,7 @@ const state = {
           roomId,
           player: "playerOne",
         }),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((dataFromServer) => {
-          state.setPlayerStartStatus(dataFromServer.player);
-        });
+      });
     }
   },
   updateHandPick(userId: string, roomId: string, hand: string) {
@@ -216,13 +204,7 @@ const state = {
           player: "playerTwo",
           hand,
         }),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((dataFromServer) => {
-          state.setMove(dataFromServer.player, dataFromServer.hand);
-        });
+      });
     } else {
       fetch(API_BASE_URL + "/rooms/hand", {
         method: "PATCH",
@@ -235,13 +217,7 @@ const state = {
           player: "playerOne",
           hand,
         }),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((dataFromServer) => {
-          state.setMove(dataFromServer.player, dataFromServer.hand);
-        });
+      });
     }
   },
   updateHistory(userId: string, roomId: string, result: string) {
@@ -256,13 +232,7 @@ const state = {
           roomId,
           result,
         }),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((dataFromServer) => {
-          state.setHistory(dataFromServer.playerOne, dataFromServer.playerTwo);
-        });
+      });
     } else {
       fetch(API_BASE_URL + "/rooms/history", {
         method: "PATCH",
@@ -274,13 +244,7 @@ const state = {
           roomId,
           result: "empate",
         }),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((dataFromServer) => {
-          state.setHistory(dataFromServer.playerOne, dataFromServer.playerTwo);
-        });
+      });
     }
   },
   resetFlags(userId: string, roomId: string) {

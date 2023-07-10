@@ -6,7 +6,6 @@ class result extends HTMLElement {
     this.render();
   }
   addListeners() {
-    state.listenRoom();
     const container = this.querySelector(".results-container");
     let containerStyle = document.createElement("style");
     containerStyle.innerHTML = `
@@ -22,12 +21,7 @@ class result extends HTMLElement {
     container?.appendChild(containerStyle);
     const buttonEl = this.querySelector(".button");
     buttonEl?.addEventListener("click", () => {
-      state.resetFlags(state.getUserId(), state.getPrivateId());
-      state.suscribe(() => {
-        if (state.playersStatusIsFalse()) {
-          Router.go("start-game");
-        }
-      });
+      console.log("me clickearon");
     });
   }
 
