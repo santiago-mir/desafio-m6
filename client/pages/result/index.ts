@@ -6,6 +6,7 @@ class result extends HTMLElement {
     this.render();
   }
   addListeners() {
+    state.resetFlags(state.getUserId(), state.getPrivateId());
     const container = this.querySelector(".results-container");
     let containerStyle = document.createElement("style");
     containerStyle.innerHTML = `
@@ -21,7 +22,18 @@ class result extends HTMLElement {
     container?.appendChild(containerStyle);
     const buttonEl = this.querySelector(".button");
     buttonEl?.addEventListener("click", () => {
-      console.log("me clickearon");
+      state.updateStartStatus(state.getUserId(), state.getPrivateId());
+      state.suscribe(() => {
+        container!.innerHTML = `
+        <div class="start-room-content">
+        <custom-text tag="p" type="paragraph">Esperando a que ${state.getOtherUserName()} presione Jugar</custom-text>
+        </div>
+        `;
+        container?.appendChild(containerStyle);
+        if (state.playersAreReady()) {
+          Router.go("countdown");
+        }
+      });
     });
   }
 

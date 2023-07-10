@@ -260,13 +260,7 @@ const state = {
           player: "playerTwo",
           hand: "",
         }),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((dataFromServer) => {
-          state.setFlags(dataFromServer.player);
-        });
+      });
     } else {
       fetch(API_BASE_URL + "/rooms/reset", {
         method: "PATCH",
@@ -279,13 +273,7 @@ const state = {
           player: "playerOne",
           hand: "",
         }),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((dataFromServer) => {
-          state.setFlags(dataFromServer.player);
-        });
+      });
     }
   },
   setFlags(player: string) {
