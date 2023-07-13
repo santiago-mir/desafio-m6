@@ -7,6 +7,7 @@ class gameRoom extends HTMLElement {
   }
   addListeners() {
     this.listenPlayersStatus();
+    state.listenOnlineStatus(state.getUserId(), state.getPrivateId());
   }
   listenPlayersStatus() {
     state.suscribe(() => {

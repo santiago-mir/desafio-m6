@@ -69,14 +69,18 @@ app.post("/rooms", (req, res) => {
             owner: userId,
             currentGame: {
               playerOne: {
+                id: userId,
                 name: userName,
                 online: true,
                 start: false,
+                currentHand: "",
               },
               playerTwo: {
+                id: "",
                 name: "",
                 online: false,
                 start: false,
+                currentHand: "",
               },
               history: {
                 playerOne: 0,
@@ -121,16 +125,47 @@ app.get("/rooms/:roomId", (req, res) => {
           .get()
           .then((docSnap) => {
             const data = docSnap.data();
-            let rtdbRoomRef = rtdb.ref("rooms/" + data.rtdbRoomId);
-            rtdbRoomRef.child("currentGame").child("playerTwo").update({
-              name: userName,
-              online: true,
-            });
-            res.json(data);
+            if (data) {
+              let rtdbRoomRef = rtdb.ref("rooms/" + data.rtdbRoomId);
+              rtdbRoomRef.get().then((snap) => {
+                let roomData = snap.val();
+                let playerOneId = roomData.currentGame.playerOne.id;
+                let playerTwoId = roomData.currentGame.playerTwo.id;
+                if (
+                  playerTwoId == "" ||
+                  userId == playerOneId ||
+                  userId == playerTwoId
+                ) {
+                  if (userName == roomData.currentGame.playerOne.name) {
+                    rtdbRoomRef.child("currentGame").child("playerOne").update({
+                      online: true,
+                    });
+                  } else {
+                    rtdbRoomRef.child("currentGame").child("playerTwo").update({
+                      name: userName,
+                      id: userId,
+                      online: true,
+                    });
+                  }
+                  res.json(data);
+                } else {
+                  res.status(401).json({
+                    error: true,
+                    message: "el room esta lleno",
+                  });
+                }
+              });
+            } else {
+              res.status(401).json({
+                error: true,
+                message: "el room no existe",
+              });
+            }
           });
       } else {
         res.status(401).json({
-          message: "no existis",
+          error: true,
+          message: "el user no existe",
         });
       }
     });
@@ -259,8 +294,32 @@ app.patch("/rooms/reset", (req, res) => {
         let data = { player: player, hand: hand, status: false };
         let rtdbRoomRef = rtdb.ref("rooms/" + roomId);
         rtdbRoomRef.child("currentGame").child(player).update({
-          currentHand: hand,
           start: false,
+          currentHand: hand,
+        });
+        res.json(data);
+      } else {
+        res.status(401).json({
+          message: "no existis",
+        });
+      }
+    });
+});
+app.patch("/rooms/logout", (req, res) => {
+  const { userId } = req.body;
+  const { roomId } = req.body;
+  const { player } = req.body;
+  userRef
+    .doc(userId.toString())
+    .get()
+    .then((snap) => {
+      if (snap.exists) {
+        let data = { player: player, hand: "", status: false, online: false };
+        let rtdbRoomRef = rtdb.ref("rooms/" + roomId);
+        rtdbRoomRef.child("currentGame").child(player).update({
+          online: false,
+          start: false,
+          currentHand: "",
         });
         res.json(data);
       } else {

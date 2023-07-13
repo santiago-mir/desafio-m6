@@ -20,12 +20,14 @@ const state = {
       privateId: "",
       currentGame: {
         playerOne: {
+          id: "",
           name: "",
           online: false,
           start: false,
           currentHand: "",
         },
         playerTwo: {
+          id: "",
           name: "",
           online: false,
           start: false,
@@ -79,6 +81,35 @@ const state = {
       currentState.rtdbData.currentGame = data.currentGame;
       state.setState(currentState);
       console.log("setie el estado desde el listen room");
+    });
+  },
+  listenOnlineStatus(userId: string, roomId: string) {
+    window.addEventListener("beforeunload", (e) => {
+      if (state.getUserName() == state.getPlayerTwoName()) {
+        fetch(API_BASE_URL + "/rooms/logout", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId,
+            roomId,
+            player: "playerTwo",
+          }),
+        });
+      } else {
+        fetch(API_BASE_URL + "/rooms/logout", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId,
+            roomId,
+            player: "playerOne",
+          }),
+        });
+      }
     });
   },
   signUpUser(email: string, name: string) {
@@ -139,6 +170,7 @@ const state = {
         this.listenRoom();
       });
   },
+
   enterRoom(roomId: string, userName: string) {
     const userId = state.getUserId();
     fetch(
@@ -160,8 +192,12 @@ const state = {
         return res.json();
       })
       .then((data) => {
-        state.setRtdbData(roomId, data.rtdbRoomId);
-        this.listenRoom();
+        if (data.error) {
+          console.log(data);
+        } else {
+          state.setRtdbData(roomId, data.rtdbRoomId);
+          this.listenRoom();
+        }
       });
   },
   updateStartStatus(userId: string, roomId: string) {
