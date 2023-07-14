@@ -14,6 +14,9 @@ class Home extends HTMLElement {
     loginRoomButtonEl?.addEventListener("click", () => {
       this.displayForm();
     });
+    if (state.getError().error) {
+      state.resetError();
+    }
   }
   submitNewRoom() {
     const userId = state.getUserId();
@@ -32,7 +35,21 @@ class Home extends HTMLElement {
       let roomId = e.target["room-id"].value;
       state.enterRoom(roomId, state.getUserName());
       state.suscribe(() => {
-        Router.go("/game-room");
+        if (state.getError().error) {
+          const container = this.querySelector(".home-container");
+          container!.innerHTML = `
+          <custom-text tag="p" type="paragraph">${
+            state.getError().message
+          }</custom-text>
+          <button class="button">Volver</button>
+          `;
+          let buttonEl = container?.querySelector(".button");
+          buttonEl?.addEventListener("click", () => {
+            this.render();
+          });
+        } else if (state.getPublicId()) {
+          Router.go("/game-room");
+        }
       });
     });
   }

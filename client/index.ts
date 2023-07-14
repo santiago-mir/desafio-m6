@@ -10,5 +10,4 @@ import "./pages/preview";
 import "./pages/result";
 import "./router";
 import { state } from "./state";
-
 state.init();

@@ -151,21 +151,21 @@ app.get("/rooms/:roomId", (req, res) => {
                 } else {
                   res.status(401).json({
                     error: true,
-                    message: "el room esta lleno",
+                    message: "El room esta lleno",
                   });
                 }
               });
             } else {
               res.status(401).json({
                 error: true,
-                message: "el room no existe",
+                message: "El room no existe",
               });
             }
           });
       } else {
         res.status(401).json({
           error: true,
-          message: "el user no existe",
+          message: "El user no existe",
         });
       }
     });

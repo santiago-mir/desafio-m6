@@ -38,6 +38,8 @@ const state = {
           playerTwo: 0,
         },
       },
+      error: false,
+      message: "",
     },
   },
   listeners: [],
@@ -57,7 +59,6 @@ const state = {
   },
   setState(newState) {
     this.data = newState;
-    console.log(newState);
     for (const cb of this.listeners) {
       cb();
     }
@@ -80,7 +81,6 @@ const state = {
       const data = snapShot.val();
       currentState.rtdbData.currentGame = data.currentGame;
       state.setState(currentState);
-      console.log("setie el estado desde el listen room");
     });
   },
   listenOnlineStatus(userId: string, roomId: string) {
@@ -193,7 +193,7 @@ const state = {
       })
       .then((data) => {
         if (data.error) {
-          console.log(data);
+          state.catchError(data);
         } else {
           state.setRtdbData(roomId, data.rtdbRoomId);
           this.listenRoom();
@@ -268,7 +268,13 @@ const state = {
           roomId,
           result,
         }),
-      });
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((currentHistory) => {
+          state.setHistory(currentHistory.playerOne, currentHistory.playerTwo);
+        });
     } else {
       fetch(API_BASE_URL + "/rooms/history", {
         method: "PATCH",
@@ -280,7 +286,13 @@ const state = {
           roomId,
           result: "empate",
         }),
-      });
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((currentHistory) => {
+          state.setHistory(currentHistory.playerOne, currentHistory.playerTwo);
+        });
     }
   },
   resetFlags(userId: string, roomId: string) {
@@ -311,6 +323,18 @@ const state = {
         }),
       });
     }
+  },
+  catchError(data) {
+    const currentState = this.getState();
+    currentState.rtdbData.error = true;
+    currentState.rtdbData.message = data.message;
+    this.setState(currentState);
+  },
+  resetError() {
+    const currentState = this.getState();
+    currentState.rtdbData.error = false;
+    currentState.rtdbData.message = "";
+    this.setState(currentState);
   },
   setFlags(player: string) {
     const currentState = this.getState();
@@ -383,6 +407,13 @@ const state = {
   getHistory() {
     const currentState = this.getState();
     return currentState.rtdbData.currentGame.history;
+  },
+  getError() {
+    const currentState = this.getState();
+    return {
+      error: currentState.rtdbData.error,
+      message: currentState.rtdbData.message,
+    };
   },
   playersAreOnline() {
     const currentState = this.getState();

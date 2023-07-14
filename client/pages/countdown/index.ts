@@ -6,6 +6,7 @@ class countdown extends HTMLElement {
     this.render();
   }
   addListeners(counter) {
+    let container = this.querySelector(".countdown-container");
     let countdown = this.querySelector(".countdown");
     let hands = this.querySelectorAll(".imagen");
     function initCountdown() {
@@ -14,7 +15,11 @@ class countdown extends HTMLElement {
         countdown!.innerHTML = `
             <custom-text type="title">${counter}</custom-text>
           `;
-        if (counter <= 0 || state.playersChoseMove()) {
+        if (counter <= 0) {
+          clearInterval(intervalID);
+          state.resetFlags(state.getUserId(), state.getPrivateId());
+        }
+        if (state.playersChoseMove()) {
           clearInterval(intervalID);
         }
       }, 1000);
@@ -42,7 +47,7 @@ class countdown extends HTMLElement {
   }
 
   render() {
-    let counter: number = 3;
+    let counter: number = 4;
     this.innerHTML = `
     <div class="countdown-container">
     <div class="countdown"><custom-text type="title">${counter}</custom-text></div>
