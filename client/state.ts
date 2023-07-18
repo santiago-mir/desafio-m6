@@ -36,6 +36,7 @@ const state = {
         history: {
           playerOne: 0,
           playerTwo: 0,
+          result: "",
         },
       },
       error: false,
@@ -59,6 +60,7 @@ const state = {
   },
   setState(newState) {
     this.data = newState;
+    console.log(newState);
     for (const cb of this.listeners) {
       cb();
     }
@@ -80,6 +82,7 @@ const state = {
     onValue(chatRoomRef, (snapShot) => {
       const data = snapShot.val();
       currentState.rtdbData.currentGame = data.currentGame;
+      console.log("setie el estado desde el listen room", currentState);
       state.setState(currentState);
     });
   },
@@ -268,31 +271,7 @@ const state = {
           roomId,
           result,
         }),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((currentHistory) => {
-          state.setHistory(currentHistory.playerOne, currentHistory.playerTwo);
-        });
-    } else {
-      fetch(API_BASE_URL + "/rooms/history", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId,
-          roomId,
-          result: "empate",
-        }),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((currentHistory) => {
-          state.setHistory(currentHistory.playerOne, currentHistory.playerTwo);
-        });
+      });
     }
   },
   resetFlags(userId: string, roomId: string) {
