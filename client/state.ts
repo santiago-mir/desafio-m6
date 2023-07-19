@@ -60,7 +60,6 @@ const state = {
   },
   setState(newState) {
     this.data = newState;
-    console.log(newState);
     for (const cb of this.listeners) {
       cb();
     }
